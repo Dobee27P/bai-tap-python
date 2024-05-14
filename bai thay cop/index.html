@@ -1,0 +1,74 @@
+  <html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      //google.charts.setOnLoadCallback(drawChart);
+		function parseTimeString(timeString) {
+			// Tách năm, tháng, ngày, giờ, phút và giây từ chuỗi thời gian
+			const [datePart, timePart] = timeString.split('T');
+			const [year, month, day] = datePart.split('-');
+			const [hour, minute, second] = timePart.split(':');
+
+			// Tạo một đối tượng Date từ các phần đã tách
+			const dateObject = new Date(year, month - 1, day, hour, minute, second);
+
+			return dateObject;
+		}
+      function drawChart(json) {
+        //var json = {"name":"nhiệt độ phòng khách","data":[{"v":28.00,"t":"2024-05-13T03:30:00"},{"v":28.00,"t":"2024-05-13T04:58:21"},{"v":28.10,"t":"2024-05-13T04:58:24"},{"v":28.10,"t":"2024-05-13T04:59:36"},{"v":28.20,"t":"2024-05-13T04:59:39"},{"v":28.20,"t":"2024-05-13T05:08:18"},{"v":28.30,"t":"2024-05-13T05:08:21"},{"v":28.30,"t":"2024-05-13T05:20:21"},{"v":28.50,"t":"2024-05-13T05:20:24"},{"v":28.50,"t":"2024-05-13T05:21:27"},{"v":28.60,"t":"2024-05-13T05:21:30"},{"v":28.60,"t":"2024-05-13T05:21:54"},{"v":28.70,"t":"2024-05-13T05:21:57"},{"v":28.70,"t":"2024-05-13T05:22:48"},{"v":28.60,"t":"2024-05-13T05:22:51"},{"v":28.60,"t":"2024-05-13T05:23:57"},{"v":28.50,"t":"2024-05-13T05:24:00"},{"v":28.50,"t":"2024-05-13T05:28:39"},{"v":28.60,"t":"2024-05-13T05:28:42"},{"v":28.60,"t":"2024-05-13T05:29:06"},{"v":28.80,"t":"2024-05-13T05:29:09"},{"v":28.80,"t":"2024-05-13T05:30:00"},{"v":0.00,"t":"2024-05-13T05:30:00"},{"v":0.00,"t":"2024-05-13T05:45:51"},{"v":32.00,"t":"2024-05-13T05:45:51"},{"v":32.00,"t":"2024-05-13T05:46:18"},{"v":32.10,"t":"2024-05-13T05:46:21"},{"v":32.10,"t":"2024-05-13T05:47:06"},{"v":32.30,"t":"2024-05-13T05:47:09"},{"v":32.30,"t":"2024-05-13T05:48:00"},{"v":33.00,"t":"2024-05-13T05:48:03"}]}
+        var dulieu =[['time', json.name]];
+        for(var item of json.data){
+        	dulieu.push([parseTimeString(item.t), item.v]);
+        }
+        var data = google.visualization.arrayToDataTable(dulieu);
+
+        var options = {
+          title: 'Company Performance',
+          //curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+      function ve_bieu_do(){
+        //get json from db
+        // Tạo một XMLHttpRequest object
+		var xhr = new XMLHttpRequest();
+
+		// Khai báo hàm callback để xử lý kết quả trả về từ API
+		xhr.onreadystatechange = function() {
+		    if (xhr.readyState === XMLHttpRequest.DONE) {
+		        if (xhr.status === 200) {
+		            // Xử lý kết quả trả về từ API ở đây
+		            var json = JSON.parse(xhr.responseText);
+		            //call hàm mẫu
+        			drawChart(json);
+		        } else {
+		            // Xử lý lỗi nếu có
+		            console.error('Đã có lỗi khi gọi tới API:', xhr.status);
+		        }
+		    }
+		};
+
+		// Cấu hình request: method, endpoint và có thể thêm thông tin khác như headers,...
+		var method = "GET"; // hoặc "POST", "PUT",...
+		var url = "/api.aspx?sid=1"; // URL của API bạn muốn gọi
+
+		// Mở kết nối đến API
+		xhr.open(method, url, true);
+
+		// Gửi request
+		xhr.send();
+
+        
+      }
+    </script>
+  </head>
+  <body>
+  	<button onclick="ve_bieu_do()">Tải json về vẽ biểu đồ</button>
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+  </body>
+</html>

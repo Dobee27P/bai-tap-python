@@ -1,0 +1,127 @@
+[
+    {
+        "id": "1",
+        "type": "tab",
+        "label": "Weather Flow",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "2",
+        "type": "http in",
+        "z": "1",
+        "name": "",
+        "url": "/get_weather",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 100,
+        "wires": [
+            [
+                "3"
+            ]
+        ]
+    },
+    {
+        "id": "3",
+        "type": "http request",
+        "z": "1",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://localhost:8000/weather",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 450,
+        "y": 100,
+        "wires": [
+            [
+                "4"
+            ]
+        ]
+    },
+    {
+        "id": "5",
+        "type": "MSSQL",
+        "z": "1",
+        "mssqlCN": "6",
+        "name": "",
+        "query": "SELECT * FROM WeatherData",
+        "outField": "payload",
+        "x": 440,
+        "y": 240,
+        "wires": [
+            [
+                "4",
+                "f906c2024bd5a549"
+            ]
+        ]
+    },
+    {
+        "id": "4",
+        "type": "http response",
+        "z": "1",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 670,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "f906c2024bd5a549",
+        "type": "MSSQL",
+        "z": "1",
+        "mssqlCN": "74929a14c7ac2967",
+        "name": "WeatherMonitoring",
+        "query": "-- Database: WeatherMonitoring\nCREATE DATABASE WeatherMonitoring;\nUSE WeatherMonitoring;\n\n-- Table: WeatherData\nCREATE TABLE WeatherData (\n    id INT PRIMARY KEY IDENTITY(1,1),\n    timestamp DATETIME NOT NULL,\n    temperature FLOAT NOT NULL,\n    humidity FLOAT NOT NULL,\n    pressure FLOAT NOT NULL,\n    wind_speed FLOAT NOT NULL\n);\n\n-- Inserting sample data into WeatherData table\nINSERT INTO WeatherData (timestamp, temperature, humidity, pressure, wind_speed) VALUES\n('2024-05-01 08:00:00', 25.5, 60, 1012, 5.0),\n('2024-05-01 09:00:00', 26.0, 58, 1013, 4.5),\n('2024-05-01 10:00:00', 27.0, 55, 1014, 6.0),\n('2024-05-14 23:57:00', 27.0, 50,1015,7.0);\n\n\n",
+        "outField": "payload",
+        "x": 790,
+        "y": 240,
+        "wires": [
+            [
+                "1bc85f16569d32d2"
+            ]
+        ]
+    },
+    {
+        "id": "1bc85f16569d32d2",
+        "type": "debug",
+        "z": "1",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "6",
+        "type": "MSSQL-CN",
+        "name": "your-mssql-connection-config",
+        "server": "desktop-p86b7r4\\sqlexpress",
+        "encyption": false,
+        "database": "WeatherMonitoring"
+    },
+    {
+        "id": "74929a14c7ac2967",
+        "type": "MSSQL-CN",
+        "name": "WeatherMonitoring",
+        "server": "127.0.0.1",
+        "encyption": true,
+        "database": "WeatherMonitoring"
+    }
+]

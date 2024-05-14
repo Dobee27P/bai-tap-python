@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+    <script>
+        async function fetchWeatherData() {
+            const response = await fetch('api/weather');
+            const data = await response.json();
+            let table = '<table><tr><th>Timestamp</th><th>Temperature</th><th>Humidity</th><th>Pressure</th><th>Wind Speed</th></tr>';
+            data.forEach(row => {
+                table += `<tr>
+                            <td>${row.timestamp}</td>
+                            <td>${row.temperature}</td>
+                            <td>${row.humidity}</td>
+                            <td>${row.pressure}</td>
+                            <td>${row.wind_speed}</td>
+                          </tr>`;
+            });
+            table += '</table>';
+            document.getElementById('weather-data').innerHTML = table;
+        }
+    </script>
+</head>
+<body onload="fetchWeatherData()">
+    <h1>Weather Monitoring</h1>
+    <div id="weather-data"></div>
+</body>
+</html>
